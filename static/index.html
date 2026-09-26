@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hiring pipeline</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1' y='6' width='3' height='4' fill='%230E6B5E'/><rect x='6' y='6' width='3' height='4' fill='%230E6B5E'/><rect x='11' y='6' width='4' height='4' fill='%2316202A'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="job">
+      <h1>Senior Data Analyst</h1>
+      <p class="job-meta" id="job-meta">Loading candidates…</p>
+    </div>
+    <button class="btn btn-primary" id="add-open" type="button">Add candidate</button>
+  </header>
+
+  <main>
+    <section class="finder" aria-label="Search candidates">
+      <div class="searchbox">
+        <label class="visually-hidden" for="q">Search candidates</label>
+        <input id="q" type="search" autocomplete="off" spellcheck="false"
+               placeholder="Search a name, or filter: in:screening for:>1w">
+        <kbd class="slash-hint" aria-hidden="true">/</kbd>
+      </div>
+
+      <div class="examples" aria-label="Example searches">
+        <button type="button" class="example" data-q="sharam">Find Priya Sharma, typed with a typo<code>sharam</code></button>
+        <button type="button" class="example" data-q="in:interview">In Interview right now<code>in:interview</code></button>
+        <button type="button" class="example" data-q="in:screening for:>1w">Stuck in Screening over a week<code>in:screening for:&gt;1w</code></button>
+        <button type="button" class="example" data-q="moved:interview since:monday">Moved to Interview since Monday<code>moved:interview since:monday</code></button>
+        <button type="button" class="example" data-q="reached:offer is:rejected">Reached Offer, not hired<code>reached:offer is:rejected</code></button>
+        <button type="button" class="example" data-q="-is:rejected">Everyone except rejected<code>-is:rejected</code></button>
+      </div>
+
+      <details class="syntax">
+        <summary>How search works</summary>
+        <table>
+          <tbody>
+            <tr><td><code>priya sharam</code></td><td>Names. Typos, missing letters and accents are fine.</td></tr>
+            <tr><td><code>in:interview</code></td><td>Current stage. Also <code>stage:</code> and <code>is:</code>. Use commas for either: <code>in:screening,interview</code>. <code>is:active</code> means still in the pipeline.</td></tr>
+            <tr><td><code>for:&gt;1w</code></td><td>Time in the current stage. <code>&gt;</code> <code>&gt;=</code> <code>&lt;</code> <code>&lt;=</code> with <code>h</code>, <code>d</code> or <code>w</code>.</td></tr>
+            <tr><td><code>moved:offer</code></td><td>Ever entered that stage. Also <code>reached:</code>.</td></tr>
+            <tr><td><code>since:monday</code></td><td>Dates the <code>moved:</code> before it. Also <code>before:</code>. Takes a weekday, <code>today</code>, <code>yesterday</code>, <code>3d</code> or <code>2026-09-21</code>.</td></tr>
+            <tr><td><code>-is:rejected</code></td><td>A leading minus excludes whatever the filter matches.</td></tr>
+          </tbody>
+        </table>
+        <p>Everything you type must hold at once. Name matches rank first, then whoever has waited longest in their stage.</p>
+      </details>
+    </section>
+
+    <section id="search-view" class="search-view" hidden aria-live="polite"></section>
+    <section id="board" class="board" aria-label="Pipeline board"></section>
+  </main>
+
+  <aside id="drawer" class="drawer" hidden aria-labelledby="drawer-name">
+    <div class="drawer-inner" id="drawer-body"></div>
+  </aside>
+
+  <dialog id="add-dialog" aria-labelledby="add-title">
+    <form id="add-form" method="dialog" novalidate>
+      <h2 id="add-title">Add candidate</h2>
+      <label for="add-name">Full name</label>
+      <input id="add-name" name="name" required maxlength="100" autocomplete="off">
+      <label for="add-email">Email <span class="optional">(optional)</span></label>
+      <input id="add-email" name="email" type="email" maxlength="200" autocomplete="off">
+      <p class="form-error" id="add-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button class="btn btn-quiet" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn btn-primary" id="add-submit" value="default">Add to Applied</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-body"></p>
+      <label for="confirm-note">Reason <span class="optional">(optional, kept in the history)</span></label>
+      <textarea id="confirm-note" rows="3" maxlength="500"></textarea>
+      <div class="dialog-actions">
+        <button class="btn btn-quiet" value="cancel">Cancel</button>
+        <button class="btn" id="confirm-ok" value="ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
