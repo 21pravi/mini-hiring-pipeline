@@ -23,6 +23,7 @@ from reportlab.platypus import (Image, KeepTogether, PageBreak, Paragraph, Simpl
 HERE = Path(__file__).resolve().parent
 SHOTS = HERE / "screenshots"
 DEFAULT_REPO = "https://github.com/21pravi/mini-hiring-pipeline"
+DEFAULT_DEMO = "https://mini-hiring-pipeline.onrender.com"
 
 INK = colors.HexColor("#16202A")
 MUTED = colors.HexColor("#5B6873")
@@ -228,7 +229,7 @@ def search_diagram(width):
 
 
 # ---------------------------------------------------------------- content
-def build(out: Path, repo: str):
+def build(out: Path, repo: str, demo: str = DEFAULT_DEMO):
     doc = SimpleDocTemplate(str(out), pagesize=A4, leftMargin=18 * mm, rightMargin=18 * mm,
                             topMargin=16 * mm, bottomMargin=16 * mm,
                             title="Mini Hiring Pipeline — Design summary", author="Praviveek",
@@ -239,7 +240,8 @@ def build(out: Path, repo: str):
     # ---- page 1: overview
     s.append(P("Mini Hiring Pipeline", H1))
     s.append(P("Design and architecture summary · Praviveek", SUB))
-    link = Table([[P(f'<b>GitHub:</b> <a href="{repo}" color="#0E6B5E"><u>{repo}</u></a>', BODY)]],
+    link = Table([[P(f'<b>GitHub:</b> <a href="{repo}" color="#0E6B5E"><u>{repo}</u></a><br/>'
+                       f'<b>Live demo:</b> <a href="{demo}" color="#0E6B5E"><u>{demo}</u></a>', BODY)]],
                  colWidths=[W])
     link.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), TEAL_BG),
                               ("LINEBEFORE", (0, 0), (0, -1), 3, TEAL),
@@ -442,7 +444,8 @@ def _footer(canvas, doc):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=DEFAULT_REPO, help="GitHub repository URL")
+    ap.add_argument("--demo", default=DEFAULT_DEMO, help="live demo URL")
     ap.add_argument("--out", default=str(HERE / "design.pdf"))
     a = ap.parse_args()
-    build(Path(a.out), a.repo)
+    build(Path(a.out), a.repo, a.demo)
     print("wrote", a.out)
